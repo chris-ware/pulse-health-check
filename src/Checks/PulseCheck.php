@@ -86,11 +86,11 @@ class PulseCheck extends Check
 
         $result = Result::make()->check($this);
 
-        if ((!$this->inverted && $value >= $this->failureLevel) || ($this->inverted && $value <= $this->failureLevel)) {
+        if ((! $this->inverted && $value >= $this->failureLevel) || ($this->inverted && $value <= $this->failureLevel)) {
             return $result->failed("{$value}");
         }
 
-        if ((!$this->inverted && $value >= $this->warningLevel) || ($this->inverted && $value <= $this->warningLevel)) {
+        if ((! $this->inverted && $value >= $this->warningLevel) || ($this->inverted && $value <= $this->warningLevel)) {
             return $result->warning("{$value}");
         }
 

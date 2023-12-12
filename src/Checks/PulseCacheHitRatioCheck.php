@@ -10,6 +10,7 @@ use Spatie\Health\Checks\Result;
 class PulseCacheHitRatioCheck extends Check
 {
     protected float $warnWhenRatioBelow = 25;
+
     protected float $failWhenRatioBelow = 10;
 
     protected CarbonInterval $interval;
