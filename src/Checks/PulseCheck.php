@@ -10,15 +10,15 @@ use Spatie\Health\Checks\Result;
 
 class PulseCheck extends Check
 {
-    protected string $field;
+    protected string $aggregate = 'max';
 
     protected bool $inverted = false;
 
     protected string $type;
 
-    protected int $warningLevel = 1000;
+    protected float $warningLevel;
 
-    protected int $failureLevel = 500;
+    protected float $failureLevel;
 
     protected CarbonInterval $interval;
 
@@ -31,16 +31,34 @@ class PulseCheck extends Check
         return $this;
     }
 
-    public function failureLevel(int $max): static
+    public function failWhenAbove(float $level): static
     {
-        $this->failureLevel = $max;
+        $this->failureLevel = $level;
+        $this->inverted = false;
 
         return $this;
     }
 
-    public function warningLevel(int $max): static
+    public function failWhenBelow(float $level): static
     {
-        $this->warningLevel = $max;
+        $this->failureLevel = $level;
+        $this->inverted = true;
+
+        return $this;
+    }
+
+    public function warnWhenAbove(float $level): static
+    {
+        $this->warningLevel = $level;
+        $this->inverted = false;
+
+        return $this;
+    }
+
+    public function warnWhenBelow(float $level): static
+    {
+        $this->warningLevel = $level;
+        $this->inverted = true;
 
         return $this;
     }
@@ -52,43 +70,27 @@ class PulseCheck extends Check
         return $this;
     }
 
-    public function byMax(): static
+    public function aggregate(string $aggregate): static
     {
-        $this->field = 'max';
-
-        return $this;
-    }
-
-    public function byCount(): static
-    {
-        $this->field = 'count';
-
-        return $this;
-    }
-
-    public function inverted(): static
-    {
-        $this->inverted = true;
+        $this->aggregate = $aggregate;
 
         return $this;
     }
 
     public function run(): Result
     {
-        $this->interval ??= CarbonInterval::hours(24);
+        $this->interval ??= CarbonInterval::hour();
 
-        $this->field ??= 'max';
-
-        $value = Pulse::aggregate($this->type, $this->field, $this->interval, $this->field)->first()?->{$this->field} ?? 0;
+        $value = Pulse::aggregate($this->type, $this->aggregate, $this->interval, $this->aggregate)->first()?->{$this->aggregate} ?? 0;
         $value = Number::format($value);
 
         $result = Result::make()->check($this);
 
-        if ($value >= $this->failureLevel || ($this->inverted && ($value <= $this->failureLevel))) {
+        if ((!$this->inverted && $value >= $this->failureLevel) || ($this->inverted && $value <= $this->failureLevel)) {
             return $result->failed("{$value}");
         }
 
-        if ($value >= $this->warningLevel || ($this->inverted && ($value <= $this->warningLevel))) {
+        if ((!$this->inverted && $value >= $this->warningLevel) || ($this->inverted && $value <= $this->warningLevel)) {
             return $result->warning("{$value}");
         }
 
