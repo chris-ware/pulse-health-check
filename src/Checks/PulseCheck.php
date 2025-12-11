@@ -82,16 +82,15 @@ class PulseCheck extends Check
         $this->interval ??= CarbonInterval::hour();
 
         $value = Pulse::aggregate($this->type, $this->aggregate, $this->interval, $this->aggregate)->first()?->{$this->aggregate} ?? 0;
-        $value = Number::format($value);
 
         $result = Result::make()->check($this);
 
         if ((! $this->inverted && $value >= $this->failureLevel) || ($this->inverted && $value <= $this->failureLevel)) {
-            return $result->failed("{$value}");
+            return $result->failed(Number::format($value));
         }
 
         if ((! $this->inverted && $value >= $this->warningLevel) || ($this->inverted && $value <= $this->warningLevel)) {
-            return $result->warning("{$value}");
+            return $result->warning(Number::format($value));
         }
 
         return $result->ok();
