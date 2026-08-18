@@ -1,3 +1,5 @@
+
+
 #  Pulse Health Checks
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/chris-ware/pulse-health-check.svg?style=flat-square)](https://packagist.org/packages/chris-ware/pulse-health-check)
@@ -19,7 +21,7 @@ composer require chris-ware/pulse-health-check
 
 ### Cache Hit Ratio Check
 
-This check will warn or fail if the cache hit ratio hits a certain percentage threshold. By default, it will fail at 10% hit ratio and warn at 25%.
+This check will warn or fail if the cache hit ratio hits a certain percentage threshold. By default, it will fail at 10% hit ratio or lower and warn below 25%.
 
 ```php
 use ChrisWare\PulseHealthCheck\Checks\PulseCacheHitRatioCheck;
