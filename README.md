@@ -1,5 +1,3 @@
-
-
 #  Pulse Health Checks
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/chris-ware/pulse-health-check.svg?style=flat-square)](https://packagist.org/packages/chris-ware/pulse-health-check)
